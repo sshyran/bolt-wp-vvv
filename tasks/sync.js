@@ -90,4 +90,31 @@ module.exports = {
 			}
 		],
 	},
+
+	/**
+	 * Command: grunt sync:hooks
+	 * Action: Syncs files in the private directory (usually rare updates).
+	 */
+	hooks : {
+		verbose: true,
+		files : [
+			{
+				cwd:  path.join( __dirname, '../bin' ),
+				dest: path.join( __dirname, '../.git/hooks' ),
+				src: [
+					'pre-commit',
+				],
+			}
+		],
+	},
+
+	commit : {
+		files : [
+			{
+				cwd:  path.join( __dirname, '..' ),
+				dest: path.join( __dirname, '../wp' ),
+				src: '<%= commit.files %>',
+			}
+		],
+	},
 };

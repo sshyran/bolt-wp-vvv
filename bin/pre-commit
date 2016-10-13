@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+
+# Get only the files added, changed or modified and store them in a comma
+# separated string.
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+DIFF=$(git diff --cached --name-only --diff-filter=ACM)
+FILES=${DIFF/$'\n'/,}
+
+# Only sync the files to the site committed to the master branch.
+if [[ $BRANCH == "master" && '' != $DIFF && 'wp' != $DIFF ]]; then
+	# Install required node modules if missing Grunt sync package.
+	if [[  ! -f node_modules/grunt-sync/package.json ]]; then
+		echo "Fatal error: Unable to find local grunt."
+		echo "Installing required Node modules..."
+		npm install
+	fi
+
+	# Syncs files committed over to the WP submodule.
+	grunt sync:commit --acm=$FILES
+
+	# Output a notice.
+	echo " ------------------------------------------------------------------------ "
+	echo "| New files were sucessfully synced to the 'wp' submodule and are ready  |"
+	echo "| to deploy. You can review these changes manually by changing into the  |"
+	echo "| submodule (e.g. 'cd wp') and following standard git commands or        |"
+	echo "| running 'sh ./bin/deploy.sh' from the main repo root directory.        |"
+	echo "|                                                                        |"
+	echo "| When running 'deploy.sh', please note that this will commit changes to |"
+	echo "| the submodule, push those changes to Pantheon and add a commit to the  |"
+	echo "| parent module.                                                         |"
+	echo " ------------------------------------------------------------------------ "
+	echo ""
+fi
+
+# --- Finished
+exit 0

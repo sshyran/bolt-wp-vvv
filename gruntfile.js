@@ -11,9 +11,16 @@ module.exports = function( grunt ) {
 	require( 'load-grunt-config' )( grunt, {
 		configPath : path.join( process.cwd(), 'tasks' ),
 
-		data : {},
+		data : {
+			commit : {
+				files : []
+			}
+		},
 
-		preMerge : function( config, data ) {},
+		preMerge : function( config, data ) {
+			// TODO: Improve this to exclude files from submodule which we do not need.
+			data.commit.files = grunt.option( 'acm' ).split( ',' );
+		},
 	} );
 
 	// Register grunt tasks.
