@@ -13,4 +13,4 @@ node_js:
 git:
     submodules: false
 
-script: phpunit wp-config-local.php
+script: phpunit --version
