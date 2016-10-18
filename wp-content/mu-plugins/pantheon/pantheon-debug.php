@@ -1,6 +1,6 @@
 <?php
 /**
- * Debug Pantheon when in development environment.
+ * Debug when in development environment.
  */
 if ( in_array( $_ENV['PANTHEON_ENVIRONMENT'], Array( 'dev' ) ) ) {
 	define( 'WP_DEBUG', true );
