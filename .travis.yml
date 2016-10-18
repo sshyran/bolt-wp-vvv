@@ -9,3 +9,6 @@ php:
 
 node_js:
     - '6.0'
+
+git:
+    submodules: false
