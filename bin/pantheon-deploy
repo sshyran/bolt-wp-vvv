@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+
+set -e
+
+# --- Colors
+d="\033[0m"    # Default
+r="\033[0;31m" # Red
+g="\033[0;32m" # Green
+y="\033[0;33m" # Yellow
+
+# --- Command line
+cmd="$0"
+arg="$1"
+msg="$2"
+
+# --- Directory check
+# If not run from within the bin directory, throw a notice and bail.
+if [[ $cmd == *"bin/"* ]]; then
+	echo "Don't run this script from the repo root."
+	echo "You must run this script explicitly from within the ${r}bin${d} directory."
+	echo "Please change to that directory and run the script again."
+	exit 1
+fi
+
+# --- Help & Usage
+if [[ $arg == *"-h"* ]]; then
+	echo "usage: $0 <develop|master>"
+	exit 1
+fi
+
+# --- Safety checks
+# If a branch is not provided as an argument or is not develop or master branch,
+# throw notice and bail.
+if [[ $arg == "" || ( $arg != "master" && $arg != "develop" )  ]]; then
+	echo "Deploys require a branch argument of either ${r}develop${d} or ${r}master${d}."
+	echo "Please ensure that you have provided the correct arguement."
+	echo "Or run ${g}${cmd} -h${d} for help."
+	exit 1
+fi
+
+# --- Verify Deploy
+echo "** Verifing deploy..."
+
+# Get current branches and status for the main repo and Pantheon submodule.
+cd ..
+REPO_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+REPO_STATUS=$(git status --porcelain)
+cd wp
+PNTH_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+PNTH_STATUS=$(git status --porcelain)
+cd ..
+
+# Check the status of the main repo and and Pantheon submodule.
+echo "** ${y}Checking for changes on local repositories...${d}"
+if [[ $REPO_STATUS != '' ]]; then
+	echo "** ${r}You have unstaged changes in the root local repository.${d}"
+	git status -s
+	echo "** Please commit or stash these changes before continuing."
+	exit 1
+fi
+
+if [[ $PNTH_STATUS != '' ]]; then
+	echo "** ${r}You have unstaged changes in the Pantheon site submodule.${d}"
+	cd wp
+	git status -s
+	echo "** Please commit or stash these changes before continuing."
+	exit 1
+fi
+echo "** ${g}Local repositories are clean, continuing.${d}"
+
+# Checkout the correct branches and get the origin statuses.
+echo "** ${y}Checking for changes on remote repositories...${d}"
+if [[ $REPO_BRANCH != $arg ]]; then
+	echo "** Currently on ${y}${REPO_BRANCH}${d} branch of main repo, but trying to deploy to ${y}${arg}${d} branch."
+	echo "** Switching to ${g}${arg}${d} branch of main repo."
+	git checkout $arg -q
+fi
+echo "** Fetching origin for main repo..."
+git fetch origin
+if [[ $(git status) == *"branch is behind"* ]]; then
+	echo "** ${r}Your remote repo is behind origin.${d}"
+	echo "** Pulling latest changes..."
+	git pull -q
+fi
+echo "** ${g}Main repo is up to date, continuing.${d}"
+
+cd wp
+if [[ $PNTH_BRANCH != $arg ]]; then
+	echo "** Currently on ${y}${REPO_BRANCH}${d} branch of site submodule, but trying to deploy to ${y}${arg}${d} branch."
+	echo "** Switching to ${g}${arg}${d} branch of site submodule."
+	git checkout $arg -q
+fi
+echo "** Fetching origin for submodule..."
+git fetch origin
+if [[ $(git status) == *"branch is behind"* ]]; then
+	echo "** ${r}Your remote repo is behind origin.${d}"
+	echo "** Pulling latest changes..."
+	git pull -q
+fi
+echo "** ${g}Pantheon site submodule is up to date, continuing.${d}"
+
+cd ..
+echo "** ${g}Verfication complete, deploying.${d}"
+
+# At this point we have verified that both repos do not have any unstaged or
+# uncommitted changes and are in sync with each's respective origin.
+
+# --- Deploy
+echo "** Starting deploy..."
+
+echo "** ${y}Checking status of required Node Modules...${d}"
+if [[  ! -f node_modules/grunt-sync/package.json ]]; then
+	echo "** ${r}Unable to find local grunt.${d}"
+	echo "** Installing required Node Modules..."
+	npm install &>/dev/null
+fi
+echo "** ${g}Required Node Modules installed, continuing.${d}"
+
+echo "** Syncing content with Pantheon site..."
+grunt pantheon:deploy &>/dev/null
+echo "** ${g}Content sync complete, continuing.${d}"
+
+echo "** ${y}Verifing changes on Pantheon submodule...${d}"
+cd wp
+git add --all
+echo "** The following changes are staged and ready to be committed..."
+echo "** ---"
+git status -s
+echo "** ---"
+read -p "** Ready to commit these changes? (yes|no): " answer
+
+if [[ $answer == 'no' ]]; then
+	git reset --hard HEAD -q
+	echo "** ${r}Deploy aborted and changes unstaged from submodule.${d}"
+	echo "** To run a manual check, simply run ${g}grunt pantheon:deploy${d} from the root repo and check the changes."
+	exit 1
+elif [[ $answer == 'yes' ]]; then
+	echo "** Committing changes to site submodule..."
+	if [[ '' != $msg ]]; then
+		read -p "** Enter a short message for the commit: " message
+		git commit --no-status -m "${message}"
+	else
+		git commit --no-status -m "Automated deploy of changes to site repo."
+	fi
+	git push
+	echo "** ${g}Changes successfully committed and pushed, continuing.${d}"
+
+	echo "** Committing submodule update to the parent repo..."
+	cd ..
+	git add wp
+	git commit --no-status -m "Automated reference update of wp submodule."
+	echo "** ${g}Changes successfully committed, finished.${d}"
+fi
+
+# --- Deploy complete.
+echo "** Deploy successfully completed."
+
+exit 0
