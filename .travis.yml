@@ -12,3 +12,5 @@ node_js:
 
 git:
     submodules: false
+
+script: phpunit wp-content/mu-plugins/pantheon.php
