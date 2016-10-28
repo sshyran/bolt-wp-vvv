@@ -16,7 +16,7 @@ module.exports = {
 		files : [
 			{
 				cwd:  path.join( __dirname, '../wp-content' ),
-				dest: path.join( __dirname, '../wp/wp-content' ),
+				dest: path.join( __dirname, '../pantheon/wp-content' ),
 				src : '<%= deploy.files %>',
 			}
 		]
@@ -31,10 +31,9 @@ module.exports = {
 		files : [
 			{
 				cwd:  path.join( __dirname, '../' ),
-				dest: path.join( __dirname, '../wp' ),
+				dest: path.join( __dirname, '../pantheon' ),
 				src: [
 					'wp-config.php',
-					'wp-config-local.php',
 					'pantheon.yml',
 				],
 			}
@@ -50,7 +49,7 @@ module.exports = {
 		files : [
 			{
 				cwd:  path.join( __dirname, '../private' ),
-				dest: path.join( __dirname, '../wp/private' ),
+				dest: path.join( __dirname, '../pantheon/private' ),
 				src: [
 					'**',
 				],
