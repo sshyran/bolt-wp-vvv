@@ -2,8 +2,6 @@
 
 set -e
 
-cd ..
-
 printf "## -------------------------------------------------- ##"
 printf "Setting up: %s\n" $(basename $(pwd))
 
