@@ -52,7 +52,7 @@ module.exports = function( grunt ) {
 					 * directory used primarily for development, add it to the
 					 * deploy list.
 					 */
-					if ( -1 === data.deploy.ignore.indexOf( filename ) && null === subdir.match( /\/(node_modules|dev-lib|tests)/g ) ) {
+					if ( -1 === data.deploy.ignore.indexOf( filename ) && null === subdir.match( /\/(node_modules|dev-lib|tests|debug-bar|query-monitor|rewrite-rules-inspector|user-switching|log-viewer)/g ) ) {
 						data.deploy.files.push( path.join( subdir, filename ) );
 					}
 				}
