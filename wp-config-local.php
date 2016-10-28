@@ -26,9 +26,10 @@ define( 'COMPRESS_CSS', false );
 define( 'FORCE_SSL_LOGIN', false );
 define( 'FORCE_SSL_ADMIN', false );
 
+define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/wp-content' );
+
 if ( isset( $_SERVER['HTTP_HOST'] ) ) {
 	define( 'WP_HOME', 'http://' . $_SERVER['HTTP_HOST'] );
 	define( 'WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST'] . '/wp' );
-	define( 'WP_CONTENT_DIR', dirname( dirname( __FILE__ ) ) . '/wp-content' );
 	define( 'WP_CONTENT_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/wp-content' );
 }
