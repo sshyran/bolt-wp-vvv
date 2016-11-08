@@ -22,6 +22,7 @@ addons:
     ssh_known_hosts:
 
 before_install:
+    - echo "pantheon" >> $TRAVIS_BUILD_DIR/.git/info/exclude 
     - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
     - git submodule update --init --recursive
 
