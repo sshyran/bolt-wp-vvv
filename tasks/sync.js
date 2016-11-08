@@ -13,6 +13,7 @@ module.exports = {
 	content : {
 		verbose : '<%= deploy.verbose %>',
 		updateAndDelete : true,
+		compareUsing: 'md5',
 		files : [
 			{
 				cwd:  path.join( __dirname, '../wp-content' ),
@@ -28,6 +29,7 @@ module.exports = {
 	 */
 	configs : {
 		verbose: '<%= deploy.verbose %>',
+		compareUsing: 'md5',
 		files : [
 			{
 				cwd:  path.join( __dirname, '../' ),
@@ -46,6 +48,7 @@ module.exports = {
 	 */
 	private : {
 		verbose: '<%= deploy.verbose %>',
+		compareUsing: 'md5',
 		files : [
 			{
 				cwd:  path.join( __dirname, '../private' ),

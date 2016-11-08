@@ -5,15 +5,15 @@
  * @package Pantheon Skeleton
  */
 
-define( 'DB_NAME', 'pantheonskeleton' );
-define( 'DB_USER', 'pantheonskeleton' );
-define( 'DB_PASSWORD', 'pantheonskeleton' );
+define( 'DB_NAME', 'bolt' );
+define( 'DB_USER', 'bolt' );
+define( 'DB_PASSWORD', 'bolt' );
 define( 'DB_HOST', '127.0.0.1' );
 define( 'DB_CHARSET', 'utf8' );
 define( 'DB_COLLATE', '' );
 
 define( 'WP_CACHE', false );
-define( 'WP_CACHE_KEY_SALT', 'pantheonskeleton' );
+define( 'WP_CACHE_KEY_SALT', 'bolt' );
 
 define( 'WP_DEBUG', true );
 define( 'SAVEQUERIES', true );
