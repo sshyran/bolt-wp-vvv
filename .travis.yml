@@ -1,5 +1,10 @@
 sudo: false
 
+branches:
+    only:
+    - master
+    - develop
+
 language:
     - php
     - node_js
@@ -13,4 +18,15 @@ node_js:
 git:
     submodules: false
 
-script: phpunit --version
+addons:
+    ssh_known_hosts:
+
+before_install:
+    - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+    - git submodule update --init --recursive
+
+install:
+    - npm install
+
+script:
+    - sh $TRAVIS_BUILD_DIR/deploy.sh
