@@ -23,6 +23,19 @@ Workflow for development follows the [Github Flow][5], with any new features bra
 
 Workflow for content (database) and deploys (code) follow the [Pantheon Flow][6].
 
+## Deploy
+
+:exclamation: Deploys require a [Travis CI Pro][9] account.
+
+Any changes merged into `master` and `develop` branches will trigger a deploy script on Travis. In order for this script to run properly, you need to perform a few one-time setup steps.
+
+0. Add your Pantheon site repo ssh clone URL as `PANTHEON_SITE` environment variable.
+0. Add your Pantheon site repo ssh clone URL host to the `ssh_known_hosts` section.
+ * Looks something like git clone `codeserver.dev.XXXX-XXXX-XXXX.drush.in:2222`
+0. Use [Travis CI Client][10] to create new [User Key][11] for the site.
+ * TIP: Save this key locally to a file, generate the public key and securely delete the private key.
+0. Add the public key to your Pantheon SSH keys.
+
 [1]: https://github.com/Varying-Vagrant-Vagrants/VVV
 [2]: https://github.com/Varying-Vagrant-Vagrants/VVV#the-first-vagrant-up
 [3]: https://www.getpantheon.com
@@ -31,3 +44,6 @@ Workflow for content (database) and deploys (code) follow the [Pantheon Flow][6]
 [6]: https://pantheon.io/docs/pantheon-workflow/
 [7]: https://github.com/Varying-Vagrant-Vagrants/VVV/wiki/Auto-site-Setup#the-domains-for-your-site
 [8]: http://travis-ci.org
+[9]: http://travis-ci.com
+[10]: https://github.com/travis-ci/travis.rb
+[11]: https://docs.travis-ci.com/user/private-dependencies/#User-Key
