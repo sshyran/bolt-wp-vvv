@@ -12,9 +12,6 @@ module.exports = function( grunt ) {
 		configPath : path.join( process.cwd(), 'tasks' ),
 
 		data : {
-			commit : {
-				files : [],
-			},
 			deploy : {
 				verbose : false,
 				files : [
